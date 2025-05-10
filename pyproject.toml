@@ -1,0 +1,15 @@
+[project]
+name = "mcp-crawler"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "bs4>=0.0.2",
+    "dotenv>=0.9.9",
+    "langchain>=0.3.25",
+    "markdownify>=1.1.0",
+    "mcp>=1.8.0",
+    "pydantic>=2.11.4",
+    "requests>=2.32.3",
+]
