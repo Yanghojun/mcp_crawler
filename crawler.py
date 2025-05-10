@@ -25,8 +25,8 @@ import datetime
 from typing import Any
 import httpx
 
-from mcp.server.fastmcp import FastMCP
-# from fastmcp import FastMCP
+# from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 mcp = FastMCP("crawler")
 
@@ -296,6 +296,6 @@ def get_weather(
 #     print(result)
 
 if __name__ == "__main__":
-    # Initialize and run the server
-    mcp.run(transport='stdio')
-    # mcp.run(transport="streamable-http", host="127.0.0.1", port=8000, path="/mcp")
+    # Smithery HTTP 배포를 위해 반드시 streamable-http transport로 실행
+    mcp.run(transport="streamable-http", host="0.0.0.0", port=8000, path="/mcp")
+    # mcp.run("stdio")
