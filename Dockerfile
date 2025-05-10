@@ -33,7 +33,7 @@ COPY pyproject.toml .
 
 # WORKDIR /workspace/mcp_crawler
 
-RUN uv init && uv venv
+# RUN uv init && uv venv
 #  && uv pip install -r requirements.txt
 
 CMD ["uv", "run", "crawler.py"]
