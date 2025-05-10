@@ -23,6 +23,7 @@ RUN echo "Attempting to check uv version during build..." && uv --version || tru
 WORKDIR /app
 
 COPY crawler.py .
+COPY .env .
 COPY pyproject.toml .
 # ACCESS_TOKEN을 docker build시 명령어에 넣습니다. docker build --build-arg ACCESS_TOKEN=<토큰> -t <이미지 이름>
 # ARG ACCESS_TOKEN
