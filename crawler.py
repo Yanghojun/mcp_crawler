@@ -283,5 +283,5 @@ def get_applyhome_crawl_result(
 
 if __name__ == "__main__":
     # Initialize and run the server
-    # mcp.run(transport='stdio')
-    mcp.run(transport="streamable-http", host="127.0.0.1", port=8000, path="/mcp")
+    mcp.run(transport='stdio')
+    # mcp.run(transport="streamable-http", host="127.0.0.1", port=8000, path="/mcp")
