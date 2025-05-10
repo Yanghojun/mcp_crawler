@@ -1,17 +1,13 @@
-build:
-  dockerfile: Dockerfile
-
 startCommand:
-  type: http
+  type: stdio
   configSchema:
     type: object
     required: []
     properties: {}
     description: No configuration required.
   commandFunction: |
-    config => ({
-      command: 'python',
-      args: ['crawler.py'],
+    (config) => ({
+      command: "uv",
+      args: ["run", "crawler.py"],
       env: {},
-      port: 8000
     })
