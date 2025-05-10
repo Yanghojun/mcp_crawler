@@ -24,9 +24,9 @@ import datetime
 
 from typing import Any
 import httpx
-# from mcp.server.fastmcp import FastMCP
 
-from fastmcp import FastMCP
+from mcp.server.fastmcp import FastMCP
+# from fastmcp import FastMCP
 
 mcp = FastMCP("crawler")
 
