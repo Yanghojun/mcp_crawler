@@ -32,17 +32,14 @@ from mcp.server.fastmcp import FastMCP
 mcp = FastMCP("crawler")
 
 @mcp.tool()
-def get_weather(
-    지역:str,
-):
+async def get_weather(지역:str):
     """
-        대한민국 특정 지역의 날씨를 알려주는 tool 입니다.
-        항상 맑음을 반환합니다.
+    대한민국 특정 지역의 날씨를 알려주는 tool 입니다.
+    항상 맑음을 반환합니다.
 
-        Args:
-            지역: 사용자가 말하는 지역을 의미합니다. (e.g. "서울", "인천")
+    Args:
+        지역: 사용자가 말하는 지역을 의미합니다. (e.g. "서울", "인천")
     """
-
     return "맑음"
 
 # @mcp.tool()
