@@ -293,13 +293,13 @@ async def get_applyhome_crawl_result(
     return posts
 
 
-if __name__ == "__main__":
-    result = asyncio.run(get_applyhome_crawl_result(
-        house_type="전체",
-        jiyeok="해운대",
-    )
-    )
-    print(result)
+# if __name__ == "__main__":
+#     result = asyncio.run(get_applyhome_crawl_result(
+#         house_type="전체",
+#         jiyeok="해운대",
+#     )
+#     )
+#     print(result)
 
 if __name__ == "__main__":
     # Smithery HTTP 배포를 위해 반드시 streamable-http transport로 실행
