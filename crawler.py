@@ -125,7 +125,7 @@ async def get_applyhome_crawl_result(
         # data_list = response_data["schdulList"]
         # return data_list
     
-    def _address_api(keyword,
+    async def _address_api(keyword,
                      **kwargs):
         urls = 'http://www.juso.go.kr/addrlink/addrLinkApi.do'
         confmKey = os.getenv('JUSO_API_KEY') # 필수 값 승인키
@@ -142,12 +142,20 @@ async def get_applyhome_crawl_result(
         params_str = parse.urlencode(params) # dict를 파라미터에 맞는 포맷으로 변경
         
         url = '{}?{}'.format(urls, params_str)
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(urls, params=params) as response:
+                result = await response.json()
+                status = result['results']['common']['errorMessage']
+                roadAddr_list = []
+                if status == '정상':
+                    for juso in result['results']['juso']:
+                        roadAddr_list.append(juso['jibunAddr'])
+                return list(set(roadAddr_list))
+
         response = urlopen(url) # Request 객체로 urlopen을 호출하면 요청된 URL에 대한 응답 객체를 반환
         result_xml = response.read().decode('utf-8') # response를 읽고 utf-8로 변형
         result = json.loads(result_xml)
-        # print(result)
-        # print(type(result))
-        # import pdb; pdb.set_trace()
         status = result['results']['common']['errorMessage']
         roadAddr_list = []
         lengths = len(result['results']['juso'])
@@ -157,11 +165,11 @@ async def get_applyhome_crawl_result(
         roadAddr_list = set(roadAddr_list)
         return roadAddr_list
     
-    def _transform_address(jiyeok: str) -> list:
+    async def _transform_address(jiyeok: str) -> list:
         client_id = os.getenv('X_NCP_APIGW_API_KEY_ID')    # 본인이 할당받은 ID 입력
         client_pw = os.getenv('X_NCP_APIGW_API_KEY')    # 본인이 할당받은 Secret 입력
         naver_map_api_url = 'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query='
-        add_lists = _address_api(jiyeok)
+        add_lists = await _address_api(jiyeok)
 
         result = set()
         for add_list in add_lists:
@@ -206,13 +214,21 @@ async def get_applyhome_crawl_result(
 
         return new_data_list
     
-    def _download_file(url, file_name):
-        response = requests.get(url, 
-                                verify=certifi.where())
-        if response.status_code == 200:
-            file_name = "./" + file_name
-            with open(file_name, 'wb') as file:
-                file.write(response.content)
+    async def _download_file(url, file_name):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, ssl=False) as response:
+                if response.status == 200:
+                    file_name = "./" + file_name
+                    content = await response.read()
+                    with open(file_name, 'wb') as file:
+                        file.write(content)
+
+        # response = requests.get(url, 
+        #                         verify=certifi.where())
+        # if response.status_code == 200:
+        #     file_name = "./" + file_name
+        #     with open(file_name, 'wb') as file:
+        #         file.write(response.content)
 
     def _parsing_data(data):
         result = {
@@ -226,7 +242,7 @@ async def get_applyhome_crawl_result(
         
         return result
     
-    def _post_handler(data):
+    async def _post_handler(data):
         extract_data = _parsing_data(data)
         # 파일 이름
         file_name = f'{extract_data["title"]}_{extract_data["jiyeok"]}_{extract_data["date"]}.pdf'
@@ -248,22 +264,38 @@ async def get_applyhome_crawl_result(
             detail_url = info_url[1]
         else:
             detail_url = info_url[2]
-        
-        detail_response = requests.post(detail_url, data=detail_params, headers=detail_headers,
-                                        verify=certifi.where())
-        md_content = markdownify.markdownify(detail_response.text)
 
-        detail_response.raise_for_status()
-        soup = BeautifulSoup(detail_response.content, 'html.parser')
-        link_tag = soup.find("a", class_="radius_btn")
-        down_link = link_tag.get("href")
-        # _download_file(down_link, file_name)
+        async with aiohttp.ClientSession() as session:
+            timeout = aiohttp.ClientTimeout(total=30)
+            async with session.post(detail_url, data=detail_params, headers=detail_headers, timeout=timeout) as response:
+                html_content = await response.text()
+                md_content = markdownify.markdownify(html_content)
+                
+                soup = BeautifulSoup(html_content, 'html.parser')
+                link_tag = soup.find("a", class_="radius_btn")
+                down_link = link_tag.get("href") if link_tag else None
+                
+                return {
+                    "data_hmno": extract_data,
+                    "md_content": md_content,
+                    "pdf_url": down_link
+                }
+
+        # detail_response = requests.post(detail_url, data=detail_params, headers=detail_headers,
+        #                                 verify=certifi.where())
+        # md_content = markdownify.markdownify(detail_response.text)
+
+        # detail_response.raise_for_status()
+        # soup = BeautifulSoup(detail_response.content, 'html.parser')
+        # link_tag = soup.find("a", class_="radius_btn")
+        # down_link = link_tag.get("href")
+        # # _download_file(down_link, file_name)
         
-        ret = {
-            "data_hmno": extract_data,
-            "md_content": md_content, "pdf_url": down_link
-        }
-        return ret
+        # ret = {
+        #     "data_hmno": extract_data,
+        #     "md_content": md_content, "pdf_url": down_link
+        # }
+        # return ret
     
     data_list = await _start(data_url,
                        data_headers)
@@ -274,7 +306,7 @@ async def get_applyhome_crawl_result(
     if jiyeok in enum_jiyeok:
         jiyeok_list = [jiyeok]
     else:
-        jiyeok = _transform_address(jiyeok=jiyeok)        
+        jiyeok = await _transform_address(jiyeok=jiyeok)        
     
     if house_type != "전체":
         h_type_key = type_keys[house_type]
@@ -288,7 +320,9 @@ async def get_applyhome_crawl_result(
                                 jiyeok=jiyeok_list,
                                 data_list=data_list)
 
-    posts = [_post_handler(data) for data in data_list]
+    posts = await asyncio.gather(
+        *[_post_handler(data) for data in data_list]
+    )
 
     return posts
 
@@ -297,7 +331,7 @@ async def get_applyhome_crawl_result(
 #     result = asyncio.run(get_applyhome_crawl_result(
 #         house_type="전체",
 #         jiyeok="해운대",
-#     )
+#         )
 #     )
 #     print(result)
 
