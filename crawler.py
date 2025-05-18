@@ -125,10 +125,11 @@ async def get_result(
     enum_jiyeok : str = "서울 광주 대구 대전 부산 세종 울산 인천 강원 경기 경북 \
         경남 전남 전북 제주 충남 충북"
 
-    data_list = await _start(data_url,
-                       data_headers)
+    # data_list = await _start(data_url,
+    #                    data_headers)
 
-    return data_list
+    return "Hello"
+    # return data_list
 
 # @mcp.tool()
 async def get_applyhome_crawl_result(
@@ -502,16 +503,16 @@ async def main():
     #     import sys
     #     sys.exit(0)  # 강제 종료
 
-# if __name__ == "__main__":
-#     # result = asyncio.run(get_applyhome_crawl_result(
-#     #     house_type="전체",
-#     #     jiyeok="해운대",
-#     #     )
-#     # )
-#     # print(result)
+if __name__ == "__main__":
+    result = asyncio.run(get_result(
+        house_type="전체",
+        jiyeok="해운대",
+        )
+    )
+    print(result)
 
-#     result = asyncio.run(main())
-#     print(result)
+    # result = asyncio.run(main())
+    # print(result)
 
     
 
