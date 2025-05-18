@@ -50,11 +50,28 @@ mcp = FastMCP("crawler")
 
 #     return "맑음"
 
+
+
+async def _start(data_url,
+            data_headers):
+    async with aiohttp.ClientSession() as session:
+        today_yyyymm = datetime.datetime.today().strftime("%Y%m") 
+        data_params = {
+            "reqData": {
+                "inqirePd": today_yyyymm
+                }
+        }
+    
+        async with session.post(data_url, json=data_params, headers=data_headers) as response:
+            response.raise_for_status()
+            response_data = await response.json()
+            return response_data['schdulList']
+
 @mcp.tool()
-async def aaaaaa(
-                               # user_query:str,
-                               house_type:str,
-                               jiyeok:str):
+async def get_result(
+    # user_query:str,
+    house_type:str,
+    jiyeok:str):
     """
     대한민국의 아파트의 청약, 민간사전청약아파트, 민간임대오피스텔 등의 정보를 수집할 수 있는 tool입니다.
 
@@ -104,8 +121,14 @@ async def aaaaaa(
         "충청남도": ["충남"],
         "충청북도": ["충북"],
     }
-    
-    return "Hello Hello World!"
+
+    enum_jiyeok : str = "서울 광주 대구 대전 부산 세종 울산 인천 강원 경기 경북 \
+        경남 전남 전북 제주 충남 충북"
+
+    data_list = await _start(data_url,
+                       data_headers)
+
+    return data_list
 
 # @mcp.tool()
 async def get_applyhome_crawl_result(
