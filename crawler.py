@@ -43,7 +43,7 @@ async def get_weather(지역:str):
     """
     return "맑음"
 
-@mcp.tool()
+# @mcp.tool()
 async def get_applyhome_crawl_result(
                                # user_query:str,
                                house_type:str,
