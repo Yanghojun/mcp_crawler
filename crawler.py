@@ -88,10 +88,10 @@ async def _start(data_url,
         return f"{prompt_string}\n오류: {error_resp.error}\n세부사항: {error_resp.details}"
 
 
-@mcp.tool(
-  name="get_result",
-  description="대한민국의 아파트의 청약, 민간사전청약아파트, 민간임대오피스텔 등의 정보를 수집할 수 있는 tool입니다."
-)
+# @mcp.tool(
+#   name="get_result",
+#   description="대한민국의 아파트의 청약, 민간사전청약아파트, 민간임대오피스텔 등의 정보를 수집할 수 있는 tool입니다."
+# )
 async def get_result(
     # user_query:str,
     house_type:str,
@@ -156,7 +156,10 @@ async def get_result(
     # return data_list
     # return data_list
 
-# @mcp.tool()
+@mcp.tool(
+    name="get_applyhome_crawl_result",
+    description="대한민국의 아파트의 청약, 민간사전청약아파트, 민간임대오피스텔 등의 정보를 수집할 수 있는 tool입니다."
+)
 async def get_applyhome_crawl_result(
                                # user_query:str,
                                house_type:str,
@@ -210,8 +213,6 @@ async def get_applyhome_crawl_result(
         "충청남도": ["충남"],
         "충청북도": ["충북"],
     }
-    
-    return "Hello Hello World!"
 
     enum_jiyeok : str = "서울 광주 대구 대전 부산 세종 울산 인천 강원 경기 경북 \
         경남 전남 전북 제주 충남 충북"
@@ -440,93 +441,7 @@ async def get_applyhome_crawl_result(
         *[_post_handler(data) for data in data_list]
     )
 
-
-    # 모든 대기 중인 작업 취소
-    tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
-    
-    if not tasks:
-        print("✅ 정리할 작업이 없습니다.")
-        return
-    
-    print(f"🔄 {len(tasks)}개의 작업을 취소하는 중...")
-    
-    for task in tasks:
-        task.cancel()
-
     return posts
-
-async def monitor_tasks():
-    while True:
-        tasks = [t for t in asyncio.all_tasks() 
-                if t is not asyncio.current_task()]
-        if tasks:
-            print(f"\n=== 현재 실행 중인 작업 ({len(tasks)}) ===")
-            for i, task in enumerate(tasks, 1):
-                print(f"{i}. {task.get_name()}")
-        await asyncio.sleep(1)
-
-async def main():
-    print("=== 프로그램 시작 ===")
-    monitor = asyncio.create_task(monitor_tasks(), name="모니터링_작업")
-    try:
-        result = await get_applyhome_crawl_result(
-            house_type="전체",
-            jiyeok="해운대",
-        )
-        return result
-    except asyncio.CancelledError:
-        print("작업이 취소되었습니다.")
-        return []
-    except Exception as e:
-        print(f"오류 발생: {e}")
-        return []
-    finally:
-        # 모니터링 작업 취소
-        monitor.cancel()
-        try:
-            await asyncio.wait_for(monitor, timeout=1.0)
-        except (asyncio.TimeoutError, asyncio.CancelledError):
-            pass
-        
-        # 모든 대기 중인 작업 취소
-        pending = [t for t in asyncio.all_tasks() 
-                  if t is not asyncio.current_task() and not t.done()]
-        
-        if pending:
-            print(f"\n🔄 {len(pending)}개의 대기 중인 작업을 취소하는 중...")
-            for task in pending:
-                task.cancel()
-            
-            # 완료되지 않은 작업이 완료될 때까지 기다림 (최대 2초)
-            try:
-                await asyncio.wait(pending, timeout=2.0)
-            except (asyncio.TimeoutError, asyncio.CancelledError):
-                pass
-        
-        print("=== 프로그램 종료 ===")
-
-# if __name__ == "__main__":
-#     try:
-#         result = asyncio.run(main())
-#         # 결과가 너무 길 경우를 대비해 일부만 출력
-#         if isinstance(result, (list, tuple)) and len(result) > 3:
-#             print("\n=== 결과 (일부) ===")
-#             for i, item in enumerate(result[:3], 1):
-#                 print(f"[{i}] {str(item)[:100]}...")
-#             print(f"...(총 {len(result)}개 중 3개 표시)")
-#         else:
-#             print("\n=== 결과 ===")
-#             print(result)
-
-#     except Exception as e:
-#         print(f"\n치명적 오류: {e}")
-#         import traceback
-#         traceback.print_exc()
-
-    # finally:
-    #     # 추가적인 정리 작업이 필요한 경우
-    #     import sys
-    #     sys.exit(0)  # 강제 종료
 
 # if __name__ == "__main__":
 #     result = asyncio.run(get_result(
