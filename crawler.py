@@ -41,9 +41,12 @@ async def get_weather(지역:str):
     Args:
         지역: 사용자가 말하는 지역을 의미합니다. (e.g. "서울", "인천")
     """
-    return "맑음"
+    a = 1
+    b = 3
 
-@mcp.tool()
+    return a + b
+
+# @mcp.tool()
 async def get_applyhome_crawl_result(
                                # user_query:str,
                                house_type:str,
