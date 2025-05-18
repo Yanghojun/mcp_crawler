@@ -54,18 +54,39 @@ mcp = FastMCP("crawler")
 
 async def _start(data_url,
             data_headers):
-    async with aiohttp.ClientSession() as session:
-        today_yyyymm = datetime.datetime.today().strftime("%Y%m") 
+    try:
+
+        # async with aiohttp.ClientSession() as session:
+        #     today_yyyymm = datetime.datetime.today().strftime("%Y%m") 
+        #     data_params = {
+        #         "reqData": {
+        #             "inqirePd": today_yyyymm
+        #             }
+        #     }
+        
+        #     async with session.post(data_url, json=data_params, headers=data_headers) as response:
+        #         response.raise_for_status()
+        #         response_data = await response.json()
+        #         return response_data['schdulList']
+
+        today_yyyymm = datetime.datetime.today().strftime("%Y%m")
         data_params = {
             "reqData": {
                 "inqirePd": today_yyyymm
-                }
+            }
         }
-    
-        async with session.post(data_url, json=data_params, headers=data_headers) as response:
+
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(data_url, json=data_params, headers=data_headers)
             response.raise_for_status()
-            response_data = await response.json()
+            response_data = response.json()
             return response_data['schdulList']
+
+    except Exception as e:
+        print(f"예상치 못한 오류 발생: {e}") # exc_info=True와 동일
+        error_resp = ErrorResponse(error="서버 내부 오류", details=str(e))
+        return f"{prompt_string}\n오류: {error_resp.error}\n세부사항: {error_resp.details}"
+
 
 @mcp.tool()
 async def get_result(
@@ -125,10 +146,11 @@ async def get_result(
     enum_jiyeok : str = "서울 광주 대구 대전 부산 세종 울산 인천 강원 경기 경북 \
         경남 전남 전북 제주 충남 충북"
 
+    return await _start(data_url, data_headers)
     # data_list = await _start(data_url,
     #                    data_headers)
 
-    return "Hello"
+    # return data_list
     # return data_list
 
 # @mcp.tool()
@@ -503,16 +525,13 @@ async def main():
     #     import sys
     #     sys.exit(0)  # 강제 종료
 
-if __name__ == "__main__":
-    result = asyncio.run(get_result(
-        house_type="전체",
-        jiyeok="해운대",
-        )
-    )
-    print(result)
-
-    # result = asyncio.run(main())
-    # print(result)
+# if __name__ == "__main__":
+#     result = asyncio.run(get_result(
+#         house_type="전체",
+#         jiyeok="해운대",
+#         )
+#     )
+#     print(result)
 
     
 
