@@ -55,6 +55,9 @@ async def get_applyhome_crawl_result(
         house_type: 아파트, 민간사전청약아파트, 민간임대오피스텔, 공공지원민간임대 중 선택합니다. 특정 유형을 선택할 수 없다면 '전체'를 선택하세요. (e.g. "전체", "아파트", "민간사전청약아파트", "민간임대오피스텔", "공공지원민간임대")
         jiyeok: 지역 이름을 추출합니다. 특정 지역을 추출할 수 없다면 '전체'를 선택하세요. (e.g. "전체", "서울특별시", "대구광역시", "전라남도", "부산광역시")
     """
+
+    return "Hello World!"
+    
     info_url: list = [
         "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do", # se : 01 or 09
         "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do", # se : 04 or 06 or 11
@@ -296,8 +299,6 @@ async def get_applyhome_crawl_result(
         #     "md_content": md_content, "pdf_url": down_link
         # }
         # return ret
-    
-    return "Hello World!"
 
     data_list = await _start(data_url,
                        data_headers)
