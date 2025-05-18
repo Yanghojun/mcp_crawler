@@ -135,15 +135,19 @@ async def _address_api(keyword,
     url = '{}?{}'.format(urls, params_str)
 
     try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(urls, params=params) as response:
-                result = await response.json()
-                status = result['results']['common']['errorMessage']
-                roadAddr_list = []
-                if status == '정상':
-                    for juso in result['results']['juso']:
-                        roadAddr_list.append(juso['jibunAddr'])
-                return list(set(roadAddr_list))
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(urls, params=params)
+            response.raise_for_status()
+            result = response.json()
+
+            status = result['results']['common']['errorMessage']
+            roadAddr_list = []
+
+            if status == '정상':
+                for juso in result['results']['juso']:
+                    roadAddr_list.append(juso['jibunAddr'])
+
+            return list(set(roadAddr_list))
 
     except Exception as e:
         return f"예상치 못한 오류 발생: {e}"
