@@ -56,8 +56,6 @@ async def get_applyhome_crawl_result(
         jiyeok: 지역 이름을 추출합니다. 특정 지역을 추출할 수 없다면 '전체'를 선택하세요. (e.g. "전체", "서울특별시", "대구광역시", "전라남도", "부산광역시")
     """
 
-    return "Hello World!"
-    
     info_url: list = [
         "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do", # se : 01 or 09
         "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do", # se : 04 or 06 or 11
@@ -102,6 +100,8 @@ async def get_applyhome_crawl_result(
     
     enum_jiyeok : str = "서울 광주 대구 대전 부산 세종 울산 인천 강원 경기 경북 \
         경남 전남 전북 제주 충남 충북"
+    
+    return "Hello World!"
     
     async def _start(data_url,
                data_headers):
