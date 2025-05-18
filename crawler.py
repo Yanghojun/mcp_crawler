@@ -32,25 +32,25 @@ from aiohttp import ClientSession
 
 mcp = FastMCP("crawler")
 
-@mcp.tool()
-async def get_weather(지역:str):
-    """
-    대한민국 특정 지역의 날씨를 알려주는 tool 입니다.
-    항상 맑음을 반환합니다.
-
-    Args:
-        지역: 사용자가 말하는 지역을 의미합니다. (e.g. "서울", "인천")
-    """
-
-    info_url: list = [
-        "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do", # se : 01 or 09
-        "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do", # se : 04 or 06 or 11
-        "https://www.applyhome.co.kr/ai/aia/selectPRMOLttotPblancDetailView.do"
-    ]
-
-    return "맑음"
-
 # @mcp.tool()
+# async def get_weather(지역:str):
+#     """
+#     대한민국 특정 지역의 날씨를 알려주는 tool 입니다.
+#     항상 맑음을 반환합니다.
+
+#     Args:
+#         지역: 사용자가 말하는 지역을 의미합니다. (e.g. "서울", "인천")
+#     """
+
+#     info_url: list = [
+#         "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do", # se : 01 or 09
+#         "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do", # se : 04 or 06 or 11
+#         "https://www.applyhome.co.kr/ai/aia/selectPRMOLttotPblancDetailView.do"
+#     ]
+
+#     return "맑음"
+
+@mcp.tool()
 async def get_applyhome_crawl_result(
                                # user_query:str,
                                house_type:str,
@@ -105,10 +105,10 @@ async def get_applyhome_crawl_result(
         "충청북도": ["충북"],
     }
     
+    return "Hello Hello World!"
+
     enum_jiyeok : str = "서울 광주 대구 대전 부산 세종 울산 인천 강원 경기 경북 \
         경남 전남 전북 제주 충남 충북"
-    
-    return "Hello Hello World!"
 
     async def _start(data_url,
                data_headers):
