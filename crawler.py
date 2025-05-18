@@ -523,13 +523,13 @@ async def get_applyhome_crawl_result(
 
     return posts
 
-if __name__ == "__main__":
-    result = asyncio.run(get_result(
-        house_type="전체",
-        jiyeok="해운대",
-        )
-    )
-    print(result)
+# if __name__ == "__main__":
+#     result = asyncio.run(get_result(
+#         house_type="전체",
+#         jiyeok="해운대",
+#         )
+#     )
+#     print(result)
 
     
 
