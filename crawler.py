@@ -88,7 +88,10 @@ async def _start(data_url,
         return f"{prompt_string}\n오류: {error_resp.error}\n세부사항: {error_resp.details}"
 
 
-@mcp.tool()
+@mcp.tool(
+  name="get_result",
+  description="대한민국의 아파트의 청약, 민간사전청약아파트, 민간임대오피스텔 등의 정보를 수집할 수 있는 tool입니다."
+)
 async def get_result(
     # user_query:str,
     house_type:str,
