@@ -3,7 +3,6 @@ from typing import Optional, Type, TypedDict, Literal
 import aiohttp
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
-load_dotenv()
 
 import os
 import requests
@@ -86,8 +85,8 @@ async def _start(data_url,
         return f"예상치 못한 오류 발생: {e}"
 
 async def _transform_address(jiyeok: str) -> list:
-    client_id = os.getenv('X_NCP_APIGW_API_KEY_ID')
-    client_pw = os.getenv('X_NCP_APIGW_API_KEY')
+    client_id = os.environ.get('X_NCP_APIGW_API_KEY_ID')
+    client_pw = os.environ.get('X_NCP_APIGW_API_KEY')
     naver_map_api_url = 'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query='
 
     add_lists = await _address_api(jiyeok)
@@ -120,7 +119,7 @@ async def _transform_address(jiyeok: str) -> list:
 async def _address_api(keyword,
                     **kwargs):
     urls = 'http://www.juso.go.kr/addrlink/addrLinkApi.do'
-    confmKey = os.getenv('JUSO_API_KEY') # 필수 값 승인키
+    confmKey = os.environ.get('JUSO_API_KEY') # 필수 값 승인키
     
     params = {
         'keyword': keyword,
@@ -164,6 +163,8 @@ async def get_result(
         house_type: 아파트, 민간사전청약아파트, 민간임대오피스텔, 공공지원민간임대 중 선택합니다. 특정 유형을 선택할 수 없다면 '전체'를 선택하세요. (e.g. "전체", "아파트", "민간사전청약아파트", "민간임대오피스텔", "공공지원민간임대")
         jiyeok: 지역 이름을 추출합니다. 특정 지역을 추출할 수 없다면 '전체'를 선택하세요. (e.g. "전체", "서울특별시", "대구광역시", "전라남도", "부산광역시")
     """
+
+    load_dotenv()       # tool 호출했을 때 환경변수 Load
 
     info_url: list = [
         "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do", # se : 01 or 09
@@ -221,13 +222,15 @@ async def get_result(
     else:
         jiyeok = await _transform_address(jiyeok=jiyeok)        
     
-    if house_type != "전체":
-        h_type_key = type_keys[house_type]
-        house_type_list.extend(h_type_key)
-    if jiyeok != "전체" and not jiyeok_list:
-        for sido in jiyeok: 
-            jiyeok_key = jiyeok_keys[sido]
-            jiyeok_list.extend(jiyeok_key)
+    return jiyeok
+
+    # if house_type != "전체":
+    #     h_type_key = type_keys[house_type]
+    #     house_type_list.extend(h_type_key)
+    # if jiyeok != "전체" and not jiyeok_list:
+    #     for sido in jiyeok: 
+    #         jiyeok_key = jiyeok_keys[sido]
+    #         jiyeok_list.extend(jiyeok_key)
 
 # @mcp.tool(
 #     name="get_applyhome_crawl_result",
@@ -516,13 +519,13 @@ async def get_applyhome_crawl_result(
 
     return posts
 
-# if __name__ == "__main__":
-#     result = asyncio.run(get_result(
-#         house_type="전체",
-#         jiyeok="해운대",
-#         )
-#     )
-#     print(result)
+if __name__ == "__main__":
+    result = asyncio.run(get_result(
+        house_type="전체",
+        jiyeok="해운대",
+        )
+    )
+    print(result)
 
     
 
