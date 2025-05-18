@@ -41,10 +41,14 @@ async def get_weather(지역:str):
     Args:
         지역: 사용자가 말하는 지역을 의미합니다. (e.g. "서울", "인천")
     """
-    a = 1
-    b = 3
 
-    return a + b
+    info_url: list = [
+        "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do", # se : 01 or 09
+        "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do", # se : 04 or 06 or 11
+        "https://www.applyhome.co.kr/ai/aia/selectPRMOLttotPblancDetailView.do"
+    ]
+
+    return "맑음"
 
 # @mcp.tool()
 async def get_applyhome_crawl_result(
