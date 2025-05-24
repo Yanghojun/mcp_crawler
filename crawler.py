@@ -221,6 +221,8 @@ async def get_result(
     house_type_list = []
     jiyeok_list = []
     
+    return data_list
+    
     if jiyeok in enum_jiyeok:
         jiyeok_list = [jiyeok]
     else:
