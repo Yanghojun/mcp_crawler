@@ -222,11 +222,11 @@ async def get_result(
     jiyeok_list = []
 
     return data_list
-    
-    if jiyeok in enum_jiyeok:
-        jiyeok_list = [jiyeok]
-    else:
-        jiyeok = await _transform_address(jiyeok=jiyeok)        
+
+    # if jiyeok in enum_jiyeok:
+    #     jiyeok_list = [jiyeok]
+    # else:
+    #     jiyeok = await _transform_address(jiyeok=jiyeok)        
 
     # if house_type != "전체":
     #     h_type_key = type_keys[house_type]
